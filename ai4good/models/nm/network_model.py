@@ -24,7 +24,7 @@ class NetworkModelParameters:
         pass
 
 @typechecked
-class CompartmentalModel(Model):
+class NetworkModel(Model):
 
     ID = 'r-network-model'
 
