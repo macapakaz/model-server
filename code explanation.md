@@ -140,3 +140,70 @@ def model_selector():
 ## Compartmental Model Results Page
 ## Compartmental Model Report Page
 ## Compartmental Model Admin Page
+
+# Model Outputs
+
+The model output seems to be held in a variable `mr` in the [cm_model_results_page file](https://github.com/AIforGoodSimulator/model-server/blob/master/ai4good/webapp/cm_model_results_page.py). 
+
+mr comes from calling the `get_result` function on the model_runner object in ai4good/webapp/apps.
+```python
+mr = model_runner.get_result(CompartmentalModel.ID, profile, camp)
+```
+This object is an instance of the `ModelRunner` (not the same as `model_runner`) class that is from ai4good/webapp/model_runner.
+```python
+model_runner = ModelRunner(facade, _redis, dask_client)
+```
+The `ModelRunner` class is created with the above parameters. facade is used to store parameters and results:
+```python
+class Facade:
+
+    def __init__(self, ps: ParamStore, rs: ModelResultStore):
+        self.ps = ps
+        self.rs = rs
+
+    @staticmethod
+    def simple():
+        return Facade(SimpleParamStore(), SimpleModelResultStore())
+```
+When we get mr from calling the `get_result` function on the `model_runner` object in ai4good/webapp/apps, we run the below code:
+```python
+def get_result(self, _model: str, _profile: str, camp: str) -> ModelResult:
+        _mdl: Model = get_models()[_model](self.facade.ps)
+        params = create_params(self.facade.ps, _model, _profile, camp)
+        res_id = _mdl.result_id(params)
+        return self.facade.rs.load(_mdl.id(), res_id)
+```
+the `Model` object, `_mdl` is created by first getting a list of models, and then indexing the model we want to use using the `_model` parameter. `_model` is set to `CompartmentalModel.ID`, so this is the model we use. We then run the compartmental model on parameters from `self.facade.ps`, which is the param store that was entered with facade as a parameter when the `model_runner` object was created.
+
+To find what info the model returns, we therefore need to look at the `get_models` function from ai4good/models/model_registry. There seems to only be one model returned by this function at the moment, which is imported from ai4good/models/cm/cm_model.
+```python
+def get_models() -> Dict[str, Any]:
+    return {
+        CompartmentalModel.ID: lambda ps: CompartmentalModel(ps)
+    }
+```
+Within the `run` function of this model, the following is returned.
+```python
+return ModelResult(self.result_id(p), {
+            #'sols_raw': sols_raw,
+            'standard_sol': standard_sol,
+            'percentiles': percentiles,
+            'config_dict': config_dict,
+            'params': p,
+            'report': report_raw,
+            'prevalence_age': prevalence_age,
+            'prevalence_all': prevalence_all,
+            'cumulative_all': cumulative_all,
+            'cumulative_age': cumulative_age
+        })
+```
+List of model outputs:
+ - standard sol
+ - percentiles
+ - report
+ - prevalence_age
+ - prevalence_all
+ - cumulative_all
+ - cumulative_age
+
+`run` function can be found here: https://github.com/AIforGoodSimulator/model-server/blob/355af127713bf64115960503e1406d8a99873fe7/ai4good/models/cm/cm_model.py#L12
