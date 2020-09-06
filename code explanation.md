@@ -197,6 +197,36 @@ return ModelResult(self.result_id(p), {
             'cumulative_age': cumulative_age
         })
 ```
+
+# model_results_store.py
+
+This file is available here: https://github.com/AIforGoodSimulator/model-server/blob/master/ai4good/models/model_result_store.py
+
+This page defines some methods to pickle and unpickle the model results, as well a method to check if the pickle file exists (although I am not too sure why this is, maybe someone else can explain?). 
+
+```python
+class SimpleModelResultStore(ModelResultStore):
+
+    def store(self, model_id: str, result_id: str, obj: Any):
+        p = self._path(f"{model_id}_{result_id}.pkl")
+        with open(p, 'wb') as handle:
+            pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def load(self, model_id: str, result_id: str) -> Any:
+        p = self._path(f"{model_id}_{result_id}.pkl")
+        with open(p, 'rb') as handle:
+            return pickle.load(handle)
+
+    def exists(self, model_id: str, result_id: str) -> bool:
+        p = self._path(f"{model_id}_{result_id}.pkl")
+        return os.path.exists(p)
+```
+
+I haven't finished this section- didn't understand what the methods at the bottom were doing- so if anyone wants to finish off feel free, it's a very short page.
+
+
+
+
 List of model outputs:
  - standard sol
  - percentiles
