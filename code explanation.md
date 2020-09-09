@@ -1,3 +1,173 @@
+# How to run the models locally
+
+To run the model locally, there are 3 steps:
+1. Download the repo
+2. Install the libraries
+3. Run the code
+
+If you have any issues with the instructions below I'd (Joseph) be happy to help out over slack/Jitsi.
+
+## Downloading the repo
+
+To download the repo, go to the [main repo page](https://github.com/AIforGoodSimulator/model-server), and click the greed button at the top right of the list of files that says "code" and then click "download zip". It should then download into your downloads folder where you can unzip it.
+
+## Installing libraries
+
+The most common way to install a python library is by using pip. You can pip install a libarary by opening command prompt and typing `pip install {library name}`. If you do not have the libarary installed already, you will get a response that looks similar to (its different for different libraries) this:
+```
+C:\Users\josep>pip install {libarary}
+Collecting {libarary}
+  Downloading https://files.pythonhosted.org/packages/00/00/aaaa/{libarary}-0.0.0-cp00-cp00m-win_amd64.whl (1.0MB)
+     |################################| 1.0MB 100kB/s
+     ...
+```
+if you already have the library installed, the below will be printed:
+```
+C:\Users\josep>pip install {libarary}
+Requirement already satisfied: {libarary} in c:\program files\python35\lib\site-packages
+```
+It might also attempt to install other libararies that it requires, so you may get a few lines that begin with "Requirement already satisfied", like with Pandas:
+```
+C:\Users\josep>pip install pandas
+Requirement already satisfied: pandas in c:\users\josep\appdata\roaming\python\python35\site-packages (0.24.2)
+Requirement already satisfied: pytz>=2011k in c:\users\josep\appdata\roaming\python\python35\site-packages (from pandas) (2020.1)
+Requirement already satisfied: python-dateutil>=2.5.0 in c:\program files\python35\lib\site-packages (from pandas) (2.8.1)
+Requirement already satisfied: numpy>=1.12.0 in c:\program files\python35\lib\site-packages (from pandas) (1.18.1)
+Requirement already satisfied: six>=1.5 in c:\program files\python35\lib\site-packages (from python-dateutil>=2.5.0->pandas) (1.15.0)
+```
+
+### If pip doesn't work
+
+It is pretty common to get the error `'pip' is not recognized as an internal or external command,
+operable program or batch file.` This will happen if you do not have python added to your environment variable, which allows the console to know where the code that needs to be run when certain commands are entered.
+
+To add pip to your environment variables:
+1. search start for "environemnt variables" and open it
+2. Click the button at the bottom right that says "environment variables"
+3. In system variables (bottom winddow) double click "path", and then "new"
+4. Add the directory that python is in on your pc (probably looks like: C:\Users\user\AppData\Local\Programs\Python\Python37-32\Scripts
+5. Restart CMD
+
+### requirements.txt
+
+Instead of manually installing all of the libraries incividually, there is a file within the repo called "reqirements.txt". This allows us to install all the libraries at once with:
+```
+pip install -r requirements.txt
+```
+A lot of the libraries will not work with older versions of python (I originally tried with python 3.5 and many of them didn't work). I was able to install all the libararies with Python 3.8.5.
+
+When we were installing the libararies we were getting errors with immutables, but the installations continued anyway and the code seems to be working fine, so I guess if you get that you could just ignore it.
+
+After I installed requirements, I got a few errors when running the code with libraries not being installed (see example error below). If you get this, you can simply install the library manually and run again.
+
+Error:
+```
+>>> import {library}
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ModuleNotFoundError: No module named '{library}'
+```
+Fix:
+```
+pip install {library}
+```
+
+Because I have two versions of python on my computer, CMD often defaults to using the older version. If this is happening to you, it is sometimes the case that `python` refers to one version and `py` refers to another. If `py` refers to the later version of python for example, you can install and run files with the code below:
+```
+py -m pip install {library}
+py file.py
+```
+
+## Running the code
+
+To get into the correct folder (you want to be in the folder called `model-server-master`) to run the code, use the cd command. To open a folder within the directory you are currently in, you can write `cd {directory}`. If you want to go to a parent directory, you can use `cd ..`.
+
+Before running the code, you need to tell python what the path we are working in is. If you don't do this, python will not know where to look for files you want to import from and you will get an error like:
+```
+Traceback (most recent call last):
+  File "ai4good/runner/console_runner.py", line 6, in <module>
+    from ai4good.models.model import Model, ModelResult
+ModuleNotFoundError: No module named 'ai4good'
+```
+To do this, you need to write into CMD:
+```
+set PYTHONPATH=%PYTHONPATH%;
+```
+It shouldn't output anything after you run the above command.
+
+Once this is all done, the files should be ready to run. You can run the following command to get help with commands for the conosle runner for the compartmental model:
+```
+C:\Users\...\model-server-master>py ai4good/runner/console_runner.py -h
+usage: console_runner.py [-h] [--model {compartmental-model}] [--profile PROFILE | --run_all_profiles]
+                         [--camp CAMP | --run_all_camps] [--do_not_load_from_model_result_cache]
+                         [--do_not_save_to_model_result_cache] [--save_plots] [--show_plots] [--save_report]
+                         [--profile_overrides PROFILE_OVERRIDES]
+
+AI4Good model runner
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --model {compartmental-model}
+                        Model to run
+  --profile PROFILE     Model profile to run, by default first one will be run
+  --run_all_profiles    Run all profiles in the model
+  --camp CAMP           Camp to run model for
+  --run_all_camps       Run all camps
+  --do_not_load_from_model_result_cache
+                        Do not load from cache, re-compute everything
+  --do_not_save_to_model_result_cache
+                        Do save results to cache
+  --save_plots          Save plots
+  --show_plots          Show plots
+  --save_report         Save model report
+  --profile_overrides PROFILE_OVERRIDES
+                        Model specific profile overrides as JSON
+```
+To get a report, you can run:
+```
+python ai4good/runner/console_runner.py --save_report
+```
+The report will be saved in `\model-server-master\fs\reports`
+
+This is what it outputs when I run all of this last section:
+```
+C:\Users\josep>cd C:\Users\...\model-server-master
+
+C:\Users\...\model-server-master>set PYTHONPATH=%PYTHONPATH%;
+
+C:\Users\...\model-server-master>py ai4good/runner/console_runner.py -h
+usage: console_runner.py [-h] [--model {compartmental-model}] [--profile PROFILE | --run_all_profiles]
+                         [--camp CAMP | --run_all_camps] [--do_not_load_from_model_result_cache]
+                         [--do_not_save_to_model_result_cache] [--save_plots] [--show_plots] [--save_report]
+                         [--profile_overrides PROFILE_OVERRIDES]
+
+AI4Good model runner
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --model {compartmental-model}
+                        Model to run
+  --profile PROFILE     Model profile to run, by default first one will be run
+  --run_all_profiles    Run all profiles in the model
+  --camp CAMP           Camp to run model for
+  --run_all_camps       Run all camps
+  --do_not_load_from_model_result_cache
+                        Do not load from cache, re-compute everything
+  --do_not_save_to_model_result_cache
+                        Do save results to cache
+  --save_plots          Save plots
+  --show_plots          Show plots
+  --save_report         Save model report
+  --profile_overrides PROFILE_OVERRIDES
+                        Model specific profile overrides as JSON
+
+C:\Users\...\model-server-master>py ai4good/runner/console_runner.py --save_report
+INFO:root:Running compartmental-model model with baseline profile
+INFO:root:Loading from model result cache
+INFO:root:Saving report
+...
+```
+
 # Temporary Model Server Code Explanation
 
 When the user travels to the route "/", the below code is run from the [server.py](https://github.com/AIforGoodSimulator/model-server/blob/master/ai4good/webapp/server.py) file:
