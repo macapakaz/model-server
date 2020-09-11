@@ -407,3 +407,16 @@ List of model outputs:
  - cumulative_age
 
 `run` function can be found here: https://github.com/AIforGoodSimulator/model-server/blob/355af127713bf64115960503e1406d8a99873fe7/ai4good/models/cm/cm_model.py#L12
+
+# plotter.py 
+
+```python
+import numpy as np
+from math import ceil, floor
+import plotly.graph_objects as go
+from ai4good.models.model import ModelResult
+```
+- NumPy is a library that adds support for large, multi-dimensional arrays, matrices and high-level mathematical functions
+- ceil and floor round up and down to the nearest integer number respectively. 
+- graph_objects is a hierarchy of Python classes. The primary classes are Figure and ipywidgets which represent entire figures and their attributes can be changed using Python functions. Documentation [here](https://plotly.com/python/graph-objects/)
+- ModelResult is
