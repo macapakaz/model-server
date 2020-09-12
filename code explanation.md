@@ -419,4 +419,4 @@ from ai4good.models.model import ModelResult
 - NumPy is a library that adds support for large, multi-dimensional arrays, matrices and high-level mathematical functions
 - ceil and floor round up and down to the nearest integer number respectively. 
 - graph_objects is a hierarchy of Python classes. The primary classes are Figure and ipywidgets which represent entire figures and their attributes can be changed using Python functions. Documentation [here](https://plotly.com/python/graph-objects/)
-- ModelResult is
+- ModelResult is a class that has an initiator function and get function. The `@typechecked` decorator adds extra functionality to the ModelResult class by automatically type-checking the yields and sends of returned generators. 
