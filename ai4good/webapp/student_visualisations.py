@@ -55,15 +55,15 @@ def update_graphs(piedropdown):             # function to call the input values 
             names='Age',                    # the column name according to which data will be classified into different pie sectors
             values=piedropdown,             # the paramters which will be visulatised
             hover_name='Age',               # age will be shown in bold in hover text
-            hole=.25,                       # hole in the middle for a donut chart
+            hole=.25,                       # donut chart
             title='Camp Parameters',        
             hover_data=['Camp'],            # exta data to be shown in hover text
-             width=800,                     #figure width in pixels
+             width=800,                     # figure width in pixels
              height=600,  
             )
     pie_chart.update_traces(marker=dict(line=dict(color='#000000', width=2)))   # adding design and extended features to pie chart 
 
-   return (pie_chart)                       # return pie_chart figure
+   return (pie_chart)                       # function returns pie_chart figure
 #------------------------------------------------------------------
 
 if __name__ == '__main__':
