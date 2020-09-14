@@ -420,3 +420,20 @@ from ai4good.models.model import ModelResult
 - ceil and floor round up and down to the nearest integer number respectively. 
 - graph_objects is a hierarchy of Python classes. The primary classes are Figure and ipywidgets which represent entire figures and their attributes can be changed using Python functions. Documentation [here](https://plotly.com/python/graph-objects/)
 - ModelResult is a class that has an initiator function and get function. The `@typechecked` decorator adds extra functionality to the ModelResult class by automatically type-checking the yields and sends of returned generators. 
+
+```python
+def population_format(num,dp=0):
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    if dp==0 and not (num/100<1 and magnitude>=1): # unless force to be dp=1... return 0 dp if (K or M or B and number >10)
+        return '%.0f%s' % (num, ['', 'K', 'M', 'B'][magnitude])
+    else:
+        return '%.1f%s' % (num, ['', 'K', 'M', 'B'][magnitude])
+```
+
+`num` is the camp population. `dp` is the number of the decimal points that `num` should be displayed to. 
+The while loops checks whether the number is in the thousands, millions, billions or is too small to fit into any of these categories, and updates `magnitude` accordingly, as well as dividing `num` by 1000 each time, so that it can be displayed in a standard-form-like way eg 1100 is displayed as 1.1K. 
+
+The first `if` statement checks if the number is to be returned as an integer (zero decimal places). It also checks if the new `num` value is less than 100 and if the original `num` was bigger than 1000. If one of these things is true (being bigger than 1000 or the new num being less than 100) then the number is displayed to 
