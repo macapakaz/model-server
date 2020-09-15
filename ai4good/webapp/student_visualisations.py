@@ -25,7 +25,9 @@ PieChart_CampParams.layout = html.Div([       # designing the layout of the page
                      {'label': 'Symptomatic', 'value': 'p_symptomatic'},        # label is the name displayed in the drop down, value is the parameter name in excel sheet
                      {'label': 'Hospitalized Symptomatic', 'value': 'Hosp_given_symptomatic'},
                      {'label':'Critical Hospitalized', 'value':'Critical_given_hospitalised'},
-                     {'label':'Population Stucture', 'value':'Population_structure'}
+                     {'label':'Population Stucture', 'value':'Population_structure'},
+                     {'label':'Chances of Symptomatic Cases becoming Critical', 'value':'Rough prob symptomatic case becomes critical'},
+                     {'label':'Expected Critical Cases', 'value':'Rough exp. no. critical'}
             ],
             value='Population_structure',     # intial parameter that is plotted when the webpage loads
             multi=False,                      # 'multi': for choosing multiple values in the dropdown 
