@@ -408,7 +408,7 @@ List of model outputs:
 
 `run` function can be found here: https://github.com/AIforGoodSimulator/model-server/blob/355af127713bf64115960503e1406d8a99873fe7/ai4good/models/cm/cm_model.py#L12
 
-# plotter.py 
+## plotter.py 
 
 ```python
 import numpy as np
@@ -419,7 +419,7 @@ from ai4good.models.model import ModelResult
 - NumPy is a library that adds support for large, multi-dimensional arrays, matrices and high-level mathematical functions
 - ceil and floor round up and down to the nearest integer number respectively. 
 - graph_objects is a hierarchy of Python classes. The primary classes are Figure and ipywidgets which represent entire figures and their attributes can be changed using Python functions. Documentation [here](https://plotly.com/python/graph-objects/)
-- ModelResult is a class that has an initiator function and get function. The `@typechecked` decorator adds extra functionality to the ModelResult class by automatically type-checking the yields and sends of returned generators. 
+- ModelResult is a class that has an initiator function and get function. Within the ModelResult class template, there are three variables: `rid` (stored as a string), `rtype` (stored as a string whose default is "generic") and `result_data` (a dictionary containing string keys and values which can be of any type). The `@typechecked` decorator adds extra functionality to the ModelResult class by automatically type-checking the yields and sends of returned generators. 
 
 ```python
 def population_format(num,dp=0):
@@ -436,4 +436,29 @@ def population_format(num,dp=0):
 `num` is the camp population. `dp` is the number of the decimal points that `num` should be displayed to. 
 The while loops checks whether the number is in the thousands, millions, billions or is too small to fit into any of these categories, and updates `magnitude` accordingly, as well as dividing `num` by 1000 each time, so that it can be displayed in a standard-form-like way eg 1100 is displayed as 1.1K. 
 
-The first `if` statement checks if the number is to be returned as an integer (zero decimal places). It also checks if the new `num` value is less than 100 and if the original `num` was bigger than 1000. If one of these things is true (being bigger than 1000 or the new num being less than 100) then the number is displayed to 
+The first `if` statements basically do the following: 
+- if 0 < num =< 100, num will be outputted to zero decimal places
+- if num is greater than 100, it will be outputted to 1 decimal place, with the corresponding magnitude eg K for thousand, M for million etc
+
+
+figure_generator() method:
+```python
+def figure_generator(sols, params, cats_to_plot):
+    population_plot = params.population
+    categories = params.categories
+
+    if len(cats_to_plot)==0:
+        cats_to_plot=['I']
+
+    font_size = 13
+
+    lines_to_plot = []
+
+    xx = sols[0]['t']
+```
+
+`params` is an object with attributes `population` and `categories`. 
+the `lines_to_plot` array is initialised. 
+`xx` - not sure what this is 
+
+
