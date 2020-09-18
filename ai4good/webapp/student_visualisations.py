@@ -75,14 +75,14 @@ def AgeBreakdown(category = None, days = 250, showAsPercent = False, df = None):
             yaxis=dict(
                 type='linear',
                 ticksuffix='%',
-                title="Percentage of population."
+                title="Percentage of population"
                 ),
             )
     else:
         fig.update_layout(
             yaxis=dict(
                 type='linear',
-                title="Proportion of population."
+                title="Proportion of population"
                 ),
             )
     return fig #Return the Plotly figure.

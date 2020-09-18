@@ -13,31 +13,29 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 categories = ["Susceptible", "Exposed", "Infected (symptomatic)", "Asymptomatically Infected", "Recovered", "Hospitalised", "Critical", "Deaths", "Offsite", "Quarantined", "No ICU Care"]
 ageCategories = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+"]
-'''
-Categories:
- Susceptible
- Exposed
- Infected (symptomatic)
- Asymptomatically Infected
- Recovered
- Hospitalised
- Critical
- Deaths
- Offsite
- Quarantined
- No ICU Care
-'''
+
+#Categories:
+# Susceptible
+# Exposed
+# Infected (symptomatic)
+# Asymptomatically Infected
+# Recovered
+# Hospitalised
+# Critical
+# Deaths
+# Offsite
+# Quarantined
+# No ICU Care
 
 app.layout = html.Div(children=[
     html.H1(children="Stacked area chart demonstration"),
 
     html.Div(children='''
-        Dash: A web application framework for Python.
+        The stacked area chart can display the breakdown of the age groups of each category as well as showing the overall trend for the entire population.
     '''),
 
     dcc.Graph(
-        id="age_breakdown_area_chart"#,
-        #figure=AgeBreakdown("Asymptomatically Infected", showAsPercent=True)
+        id="age_breakdown_area_chart"
     ),
     html.Div([
         dcc.Dropdown(
@@ -49,7 +47,7 @@ app.layout = html.Div(children=[
                 id="input_percentage",
                 options=[{"label": "Percentage", "value": "Percentage"}, {"label": "Decimal", "value": "Decimal"} ],
                 value="Percentage",
-                labelStyle={"display": "inline-block"}
+                labelStyle={"display": "inline-block", 'margin': '5px'}
             ),
         "Days: ",
         dcc.Input(
