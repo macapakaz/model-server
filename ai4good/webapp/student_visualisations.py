@@ -88,3 +88,42 @@ def AgeBreakdown(category = None, days = 250, showAsPercent = False, df = None):
     return fig #Return the Plotly figure.
 
 #-------------------------------------------------------
+
+def get_sunburst_values(df):
+        df["Population"] = (((df["Population_structure"]*df["Total_population"][1]))/100).astype('int64')
+        df["Symptomatic"] = (df["p_symptomatic"] * df["Population"]).astype('int64') 
+        df["Non_symptomatic"] = df["Population"] - df["Symptomatic"]
+        df["Symptomatic_hospitalised"] = ((df["Symptomatic"] * df["Hosp_given_symptomatic"])/100).astype('int64')
+        df["Symptomatic_unhospitalised"] = df["Symptomatic"] - df["Symptomatic_hospitalised"]
+        df["Symptomatic_critical"] = ((df["Symptomatic_hospitalised"] * df["Critical_given_hospitalised"])/100).astype('int64')
+        df["hospitalised_expected_critical"] = df["Rough exp. no. critical"].astype('int64')
+        df["Symptomatic_hospitalised"] -= df["Symptomatic_critical"] + df["hospitalised_expected_critical"]
+        df = df.drop(["Camp", "Rough prob symptomatic case becomes critical (just multiplying)", 
+            "Rough exp. no. critical", "Notes:", "Total_population", "Population_structure", "p_symptomatic", 
+            "Population", "Symptomatic", "Hosp_given_symptomatic", "Critical_given_hospitalised"], axis=1)
+        totals = pd.concat([pd.DataFrame(["Total"]), df.sum(axis=0)[1:]]).rename(index={0: 'Age'}).T
+        df = df.append(totals)
+
+        categories = ["Non-Symptomatic", "Symptomatic, Hospitalised", "Symptomatic Unhospitalised", "Symptomatic, Critical", "Hospitalised, Expected To Turn Critical"]
+        ages = [f"{10 * i}-{10 * i + 9}" for i in range(7)] + ["70+"]
+        labels = categories + [f"{category} ({age})" for age in ages for category in categories]
+        parents = ["" for i in range(len(categories))] + [category for age in ages for category in categories]
+        values_totals = [df[category][df["Age"] == "Total"][0] for category in df.columns.to_list()[1:]]
+        values_ages = [df[category][df["Age"] == age].item() for age in ages for category in df.columns.to_list()[1:]]
+        values = values_totals + values_ages
+
+        return labels, parents, values
+
+def generate_sunburst(labels, parents, values):
+
+    sunburst = go.Figure(go.Sunburst(
+        labels=labels,
+        parents=parents,
+        values=values,
+        branchvalues="total",
+    ))
+    sunburst.update_layout(margin = dict(t=0, l=0, r=0, b=0))
+    sunburst.update_traces(marker=dict(line=dict(color='#000000', width=1)))
+    return sunburst
+
+#-------------------------------------------------------
