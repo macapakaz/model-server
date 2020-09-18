@@ -96,7 +96,7 @@ def get_sunburst_values(df):
         df["Symptomatic_hospitalised"] = ((df["Symptomatic"] * df["Hosp_given_symptomatic"])/100).astype('int64')
         df["Symptomatic_unhospitalised"] = df["Symptomatic"] - df["Symptomatic_hospitalised"]
         df["Symptomatic_critical"] = ((df["Symptomatic_hospitalised"] * df["Critical_given_hospitalised"])/100).astype('int64')
-        df["hospitalised_expected_critical"] = df["Rough exp. no. critical"].astype('int64')
+        df["hospitalised_expected_critical"] = df["Rough exp. no. critical"].astype(float).astype('int64')
         df["Symptomatic_hospitalised"] -= df["Symptomatic_critical"] + df["hospitalised_expected_critical"]
         df = df.drop(["Camp", "Rough prob symptomatic case becomes critical (just multiplying)", 
             "Rough exp. no. critical", "Notes:", "Total_population", "Population_structure", "p_symptomatic", 
