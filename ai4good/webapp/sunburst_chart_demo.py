@@ -1,10 +1,10 @@
 import dash             
 import dash_core_components as dcc
 import dash_html_components as html
-from visualisations import get_sunburst_values, generate_sunburst
+from student_visualisations import get_sunburst_values, generate_sunburst
 import pandas as pd
 
-df = pd.read_csv("camp_params.csv")
+df = pd.read_csv("..\\..\\fs\\params\\camp_params.csv")
 df = df[df['Camp']=='Moria']
 
 labels, parents, values = get_sunburst_values(df)
