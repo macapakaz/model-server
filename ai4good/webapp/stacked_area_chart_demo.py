@@ -38,18 +38,20 @@ app.layout = html.Div(children=[
         id="age_breakdown_area_chart"
     ),
     html.Div([
+		html.H5(children="Category: "),
         dcc.Dropdown(
                 id="input_category",
                 options=[{"label": i, "value": i} for i in categories],
-                value="Asymptomatically Infected",
+                value="Asymptomatically Infected"
             ),
+		html.H5(children="Y Axis: "),
         dcc.RadioItems(
                 id="input_percentage",
                 options=[{"label": "Percentage", "value": "Percentage"}, {"label": "Decimal", "value": "Decimal"} ],
                 value="Percentage",
-                labelStyle={"display": "inline-block", 'margin': '5px'}
+                labelStyle={"display": "inline-block", 'margin-right': '10px'}
             ),
-        "Days: ",
+        html.H5(children="Days: "),
         dcc.Input(
                 id='input_days',
                 type='number',
@@ -59,7 +61,8 @@ app.layout = html.Div(children=[
             )
         ],
         style={'width': '50%', 'display': 'inline-block'})
-])
+],
+style={'margin': '20px'})
 
 @app.callback(
     Output("age_breakdown_area_chart", "figure"),
