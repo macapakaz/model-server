@@ -14,7 +14,7 @@ def AgeBreakdown(category = None, days = 250, showAsPercent = False, df = None):
     if (df == None):
         data = pd.read_csv("..\\runner\\tests\\expected_report.csv") #Read the data from a csv file (model output can be exported as csv).
     else:
-        data = df #Alternatively a DataFrame can be passed in containing the data.
+        data = df #Alternatively a Pandas DataFrame can be passed in containing the data.
     columns = []
     for item in data.columns:
         columns.append(item) #Generate a list of all category names
