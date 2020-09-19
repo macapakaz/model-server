@@ -128,10 +128,10 @@ def generate_sunburst(labels, parents, values):
 
 #------------------------------------------------------------------------------------------------------------------#
 # Rate of change of <category> graph using Max's stacked area chart design -Alex ----------------------------------#
-def DifferentialGraph(category= None, days = None, showAsPercent = None, df = None):
+def DifferentialGraph(category= None, days = None, showAsPercent = None, df = None, scale = "linear"):
     
     if days == None:
-        days = 250
+        days = 200 # changed to 200 as expected csv is 200 days
     if showAsPercent == None:
         showAsPercent = True
     if category == None:
@@ -201,11 +201,14 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
             stackgroup = "one" #Make sure they are all in the same stackgroup so each line stacks on each other.
         ))
     
-    
+    if scale == "log":
+        logText = "Logarithmic "
+    else:
+        logText = ""
     #update fig with new graph traces
     fig.update_layout(
             showlegend=True, #Show the list of legends
-            title=go.layout.Title(text=("Rate of Change of " + selectedCategory)), #Set the chart title to selected category
+            title=go.layout.Title(text=(logText +"Rate of Change of " + selectedCategory)), #Set the chart title to selected category
             legend_title_text="Age Groups:",
             plot_bgcolor = "rgb(100, 100, 100)", #Background colour for the chart - may need to be changed.
             xaxis=dict(
@@ -215,20 +218,29 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
         )
     
     if (showAsPercent):
+        if scale == "log":
+            titleScale = "Logarithmic Rate of Change of Percentage of population"
+        else:
+            titleScale = "Rate of Change of Percentage of population"
+
         fig.update_layout( #Adjust the y axis label and ticksuffix accordingly depending on whether percentages or decimals are chosen in the parameter.
             yaxis=dict(
-                type='linear',
+                type=scale,
                 ticksuffix='%',
-                title="Rate of Change of Percentage of population"
+                title=titleScale
                 ),
             )
     else:
+        if scale == "log":
+            titleScale = "Logarithmic Rate of Change of Proportion of population"
+        else:
+            titleScale = "Rate of Change of Proportion of population" 
+
         fig.update_layout(
             yaxis=dict(
-                type='linear',
-                title="Rate of Change of Proportion of population"
+                type=scale,
+                title=titleScale
                 ),
             )
 
     return fig
-    
