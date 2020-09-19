@@ -126,4 +126,109 @@ def generate_sunburst(labels, parents, values):
     sunburst.update_traces(marker=dict(line=dict(color='#000000', width=1)))
     return sunburst
 
-#-------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------------#
+# Rate of change of <category> graph using Max's stacked area chart design -Alex ----------------------------------#
+def DifferentialGraph(category= None, days = None, showAsPercent = None, df = None):
+    
+    if days == None:
+        days = 250
+    if showAsPercent == None:
+        showAsPercent = True
+    if category == None:
+        selectedCategory = "Infected (symptomatic)" #If category invalid, choose smptomatically Infected.
+    else:
+        selectedCategory = category 
+
+
+    # Blatently stole this from max's stacked area chart code
+    categories = ["Susceptible", "Exposed", "Infected (symptomatic)", "Asymptomatically Infected", "Recovered", "Hospitalised", "Critical", "Deaths", "Offsite", "Quarantined", "No ICU Care"]
+    ageCategories = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+"] # added blank age category (differnt to max's original) to allow for totals removed for debugging
+    if (df == None):
+        data = pd.read_csv("expected_report.csv") #Read the data from a csv file (model output can be exported as csv).
+    else:
+        data = df #Alternatively a DataFrame can be passed in containing the data.
+    columns = []
+    for item in data.columns:
+        columns.append(item) #Generate a list of all category names
+
+    dataColumnNames = []
+    for i in range(0, len(columns)-1): #Get the names of all the columns which match the selected category in the DataFrame.
+        testCategory = columns[i]
+        if (testCategory[0:len(selectedCategory)] == selectedCategory):
+            dataColumnNames.append(testCategory)
+
+    yDataFrame = data[dataColumnNames].head(days).copy() # head returns only first operand number of terms
+
+    # Will attempt to create an approximation of a differential graph by finding the increase per day
+    def create_differential(yData):
+        dyData = []
+        for i in range(0,days-1):
+            try:
+                y_previous = 0.0
+                y_previous = yData[i-1] # set previous term to previous term
+            except IndexError: # uses 0 as previous term when accessing the 0th item in yData
+                y_previous = 0.0
+        
+            y_current = yData[i]
+        
+            dyData.append((y_current-y_previous))
+        return dyData
+
+
+    fig = go.Figure()
+    colours = ["rgb(0, 0, 252)", "rgb(33, 33, 252)", "rgb(66, 66, 252)", "rgb(83, 83, 252)", "rgb(99, 99, 252)", "rgb(132, 132, 252)", "rgb(165, 165, 252)", "rgb(198, 198, 252)", "rgb(211, 211, 252)"] #Colours for each age group.
+    
+    # Create a scatter diagram line for each age category
+    for column in yDataFrame:
+        label = "Total " + str(column) #Set the label for the series to the column name if the column name doesn't contain an age range.
+        for ageRange in ageCategories:
+            if (ageRange in column):
+                label = ageRange #Set the label for the series to the age group if the column name does contain an age range.
+                
+        yData = list(yDataFrame[column])
+        dyData=create_differential(yData)
+        #multiply values by 100 to get % 
+        if showAsPercent:
+            for i in range(len(dyData)):
+                dyData[i] = 100*dyData[i]
+                
+        fig.add_trace(go.Scatter(
+            name = label,
+            x = list(range(1, days + 1)), # set x to be number of days in parameter file
+            y = create_differential(yData), # set y to calculated dyData
+            mode = "lines",
+            line = dict(width=0.5, color=colours.pop()), #Set the line colour and width.
+            stackgroup = "one" #Make sure they are all in the same stackgroup so each line stacks on each other.
+        ))
+    
+    
+    #update fig with new graph traces
+    fig.update_layout(
+            showlegend=True, #Show the list of legends
+            title=go.layout.Title(text=("Rate of Change of " + selectedCategory)), #Set the chart title to selected category
+            legend_title_text="Age Groups:",
+            plot_bgcolor = "rgb(100, 100, 100)", #Background colour for the chart - may need to be changed.
+            xaxis=dict(
+                title="Days" #Set the title for the x axis.
+                ),
+            hovermode = "x" #x unified doesn't work for some reason.
+        )
+    
+    if (showAsPercent):
+        fig.update_layout( #Adjust the y axis label and ticksuffix accordingly depending on whether percentages or decimals are chosen in the parameter.
+            yaxis=dict(
+                type='linear',
+                ticksuffix='%',
+                title="Rate of Change of Percentage of population"
+                ),
+            )
+    else:
+        fig.update_layout(
+            yaxis=dict(
+                type='linear',
+                title="Rate of Change of Proportion of population"
+                ),
+            )
+
+    return fig
+    
