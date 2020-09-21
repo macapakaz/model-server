@@ -140,9 +140,9 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
         selectedCategory = category 
 
 
-    # Blatently stole this from max's stacked area chart code
-    categories = ["Susceptible", "Exposed", "Infected (symptomatic)", "Asymptomatically Infected", "Recovered", "Hospitalised", "Critical", "Deaths", "Offsite", "Quarantined", "No ICU Care"]
+    # A lot of the following was from max's stacked area chart code
     ageCategories = ["0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70+"] # added blank age category (differnt to max's original) to allow for totals removed for debugging
+    
     if (df == None):
         data = pd.read_csv("expected_report.csv") #Read the data from a csv file (model output can be exported as csv).
     else:
@@ -163,14 +163,16 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
     def create_differential(yData):
         dyData = []
         for i in range(0,days-1):
-            try:
-                y_previous = 0.0
+            
+            if i != 0:
                 y_previous = yData[i-1] # set previous term to previous term
-            except IndexError: # uses 0 as previous term when accessing the 0th item in yData
+
+            # uses 0 as previous term when accessing the 0th item in yData
+            else:
                 y_previous = 0.0
-        
+            
             y_current = yData[i]
-        
+                    
             dyData.append((y_current-y_previous))
         return dyData
 
@@ -187,11 +189,17 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
                 
         yData = list(yDataFrame[column])
         dyData=create_differential(yData)
-        #multiply values by 100 to get % 
+
+        #multiply values by 100 to get % and determine part of the y axis title.
         if showAsPercent:
+            yAxisUnit = "Percentage"
+            yAxisUnitSuffix = '%'
             for i in range(len(dyData)):
                 dyData[i] = 100*dyData[i]
-                
+        else:
+            yAxisUnitSuffix = ""
+            yAxisUnit = "Proportion"
+        
         fig.add_trace(go.Scatter(
             name = label,
             x = list(range(1, days + 1)), # set x to be number of days in parameter file
@@ -201,10 +209,12 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
             stackgroup = "one" #Make sure they are all in the same stackgroup so each line stacks on each other.
         ))
     
+    # Add Logaritmic to title if scale="log"
     if scale == "log":
         logText = "Logarithmic "
     else:
         logText = ""
+
     #update fig with new graph traces
     fig.update_layout(
             showlegend=True, #Show the list of legends
@@ -217,30 +227,18 @@ def DifferentialGraph(category= None, days = None, showAsPercent = None, df = No
             hovermode = "x" #x unified doesn't work for some reason.
         )
     
-    if (showAsPercent):
-        if scale == "log":
-            titleScale = "Logarithmic Rate of Change of Percentage of population"
-        else:
-            titleScale = "Rate of Change of Percentage of population"
-
-        fig.update_layout( #Adjust the y axis label and ticksuffix accordingly depending on whether percentages or decimals are chosen in the parameter.
-            yaxis=dict(
-                type=scale,
-                ticksuffix='%',
-                title=titleScale
-                ),
-            )
+    # Sets one of the variables that make up the figure title to "Logarithmic " if graph has "log" scale type
+    if scale == "log":
+        yAxisTypePrefix = "Logarithmic "
     else:
-        if scale == "log":
-            titleScale = "Logarithmic Rate of Change of Proportion of population"
-        else:
-            titleScale = "Rate of Change of Proportion of population" 
+        yAxisTypePrefix = ""
 
-        fig.update_layout(
-            yaxis=dict(
-                type=scale,
-                title=titleScale
-                ),
-            )
+    fig.update_layout(
+        yaxis=dict(
+            type=scale, #linear or logarithmic
+            ticksuffix = yAxisUnitSuffix, #Adds % to end of values if percentage selected
+            title = yAxisTypePrefix + "Rate of change of " + yAxisUnit + " of population" # Sets title depending on inputs
+            ),
+        )
 
     return fig
