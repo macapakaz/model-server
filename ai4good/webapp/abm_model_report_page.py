@@ -12,7 +12,7 @@ import dash_bootstrap_components as dbc
 from ai4good.models.abm.abm_model import ABM
 from ai4good.models.abm.initialise_parameters import Parameters
 from ai4good.webapp.apps import dash_app, facade, model_runner, cache, local_cache, cache_timeout
-from ai4good.webapp.abm_model_report_utils import *
+# from ai4good.webapp.abm_model_report_utils import *
 
 
 @cache.memoize(timeout=cache_timeout)
@@ -68,7 +68,7 @@ def overview1(camp: str, params: Parameters):
     return textwrap.dedent(f'''
     ## 1. Overview
     This report provides simulation-based estimates for COVID-19 epidemic scenarios for the {camp} camp. 
-    There are an estimated {int(params.population)} people currently living in the camp. 
+    There are an estimated {str(params.total_population)} people currently living in the camp. 
     The model we use is a deterministic, age-specific compartment model. The agent-based model describe the evolution of the epidemic given the camp setting and evaluate potential interventions to combat the spread of COVID-19; the parameters that control COVID-19 transmission rates and disease progression are estimated from the literature. 
     The model tracks individuals as they undertake daily activities in a simulated camp; COVID-19 can be transmitted when infected and susceptible individuals interact. 
     If an individual becomes infected, the infection progresses through a series of disease states; age and pre-existing conditions are accounted for in the probability of moving from one stage to the next.
@@ -113,4 +113,12 @@ def overview_results(camp: str, params: Parameters):
      Interventions are applied by changing the probability of interactions in different daily activities and by dividing the camp in sectors. It is possible to test multiple combinations of interventions in different interactions scenario. Example output is presented in the pictures below, where the number of infected people (in any disease state) is presented over a 200 day period.
      ''')  
 
-
+@local_cache.memoize(timeout=cache_timeout)
+def get_model_result(camp: str, profile: str):
+    logging.info("Reading data for: " + camp + ", " + profile)
+    mr = model_runner.get_result(ABM.ID, profile, camp)
+    assert mr is not None
+    profile_df = facade.ps.get_params(ABM.ID, profile).drop(columns=['Profile'])
+    params = Parameters(facade.ps, camp, profile_df, {})
+    report = "" # load_report(mr, params)
+    return mr, profile_df, params, report
