@@ -33,6 +33,15 @@ def cm_params_path(name: str) -> str:
     return _path(f'{base}/params/cm_model', name)
 
 
+nm_base = '../../ai4good/models/nm/data'   # TODO: need to harmonize this for models to share params
+am_base = '../../ai4good/models/abm/data'
+
+def get_nm_aug_pop() -> str:
+    return _path(f'{nm_base}', 'augmented_population.csv')
+
+def get_am_aug_pop() -> str:
+    return _path(f'{am_base}', 'age_and_sex.csv')
+
 def _path(suffix: str, name: str = None) -> str:
     __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
     base_dir = os.path.join(__location__, suffix)
