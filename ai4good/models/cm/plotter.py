@@ -17,7 +17,7 @@ def population_format(num, dp=0):
         return '%.1f%s' % (num, ['', 'K', 'M', 'B'][magnitude])
 
 
-# fill_cols = ['rgba(50,50,50,0.2)','rgba(50,50,50,0.2)','rgba(50,50,50,0.2)','rgba(50,0,0,0.4)']
+
 ########################################################################################################################
 def figure_generator(sols, params, cats_to_plot):
     population_plot = params.population
@@ -114,32 +114,7 @@ def figure_generator(sols, params, cats_to_plot):
                    automargin=True,
                    type='linear'
                    ),
-        updatemenus=[dict(
-            buttons=list([
-                dict(
-                    args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'linear', 'range': yax['range'], 'automargin': True},
-                           "yaxis2": {'title': 'Population', 'type': 'linear', 'overlaying': 'y1', 'range': yax['range'], 'ticktext': [population_format(0.01*vec[i]) for i in range(len(pop_vec_lin))], 'tickvals': [i for i in pop_vec_lin], 'automargin': True, 'side':'right'}
-                           }],  # tickformat
-                    label="Linear",
-                    method="relayout"
-                ),
-                # dict(
-                #     args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'log', 'range': log_range, 'automargin': True},
-                #            "yaxis2": {'title': 'Population', 'type': 'log', 'overlaying': 'y1', 'range': log_range, 'ticktext': [population_format(0.01*vec2[i]) for i in range(len(pop_log_vec))], 'tickvals': [i for i in pop_log_vec], 'automargin': True, 'side':'right'}
-                #            }],  # 'tickformat': yax_form_log,
-                #     label="Logarithmic",
-                #     method="relayout"
-                # )
-            ]),
-            x=0.5,
-            xanchor="right",
-            pad={"r": 5, "t": 30, "b": 10, "l": 5},
-            active=0,
-            y=-0.13,
-            showactive=True,
-            direction='up',
-            yanchor="top"
-        )],
+
         legend=dict(
             font=dict(size=font_size*(20/24)),
             x=0.5,
@@ -280,37 +255,6 @@ def uncertainty_plot(sols, params, cats_to_plot, confidence_range=None):
     shapes = []
     annots = []
 
-    # if control_time[0]!=control_time[1] and not no_control:
-    #     shapes.append(dict(
-    #             # filled Blue Control Rectangle
-    #             type="rect",
-    #             x0= control_time[0],
-    #             y0=0,
-    #             x1= control_time[1],
-    #             y1= yax['range'][1],
-    #             line=dict(
-    #                 color="LightSkyBlue",
-    #                 width=0,
-    #             ),
-    #             fillcolor="LightSkyBlue",
-    #             opacity= 0.15
-    #         ))
-
-    #     annots.append(dict(
-    #             x  = 0.5*(control_time[0] + control_time[1]),
-    #             y  = 0.5,
-    #             text="<b>Control<br>" + "<b> In <br>" + "<b> Place",
-    #             textangle=0,
-    #             font=dict(
-    #                 size= font_size*(30/24),
-    #                 color="blue"
-    #             ),
-    #             showarrow=False,
-    #             opacity=0.4,
-    #             xshift= 0,
-    #             xref = 'x',
-    #             yref = 'paper',
-    #     ))
 
     layout = go.Layout(
         template="plotly",
@@ -325,32 +269,7 @@ def uncertainty_plot(sols, params, cats_to_plot, confidence_range=None):
             automargin=True,
             hoverformat='.0f',
         ),
-        updatemenus=[dict(
-            buttons=list([
-                dict(
-                    args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'linear', 'range': yax['range'], 'automargin': True},
-                           "yaxis2": {'title': 'Population', 'type': 'linear', 'overlaying': 'y1', 'range': yax['range'], 'ticktext': [population_format(0.01*vec[i]) for i in range(len(pop_vec_lin))], 'tickvals': [i for i in pop_vec_lin], 'automargin': True, 'side':'right'}
-                           }],  # tickformat
-                    label="Linear",
-                    method="relayout"
-                ),
-                # dict(
-                #     args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'log', 'range': log_range, 'automargin': True},
-                #            "yaxis2": {'title': 'Population', 'type': 'log', 'overlaying': 'y1', 'range': log_range, 'ticktext': [population_format(0.01*vec2[i]) for i in range(len(pop_log_vec))], 'tickvals': [i for i in pop_log_vec], 'automargin': True, 'side':'right'}
-                #            }],  # 'tickformat': yax_form_log,
-                #     label="Logarithmic",
-                #     method="relayout"
-                # )
-            ]),
-            x=0.5,
-            xanchor="right",
-            pad={"r": 5, "t": 30, "b": 10, "l": 5},
-            active=0,
-            y=-0.13,
-            showactive=True,
-            direction='up',
-            yanchor="top"
-        )],
+
         legend=dict(
             font=dict(size=font_size*(20/24)),
             x=0.5,
@@ -435,37 +354,7 @@ def age_structure_plot(sols, params, cats_to_plot):  # ,confidence_range=None
 
     shapes = []
     annots = []
-    # if control_time[0]!=control_time[1] and not no_control:
-    #     shapes.append(dict(
-    #             # filled Blue Control Rectangle
-    #             type="rect",
-    #             x0= control_time[0],
-    #             y0=0,
-    #             x1= control_time[1],
-    #             y1= yax['range'][1],
-    #             line=dict(
-    #                 color="LightSkyBlue",
-    #                 width=0,
-    #             ),
-    #             fillcolor="LightSkyBlue",
-    #             opacity= 0.15
-    #         ))
 
-    #     annots.append(dict(
-    #             x  = 0.5*(control_time[0] + control_time[1]),
-    #             y  = 0.5,
-    #             text="<b>Control<br>" + "<b> In <br>" + "<b> Place",
-    #             textangle=0,
-    #             font=dict(
-    #                 size= font_size*(30/24),
-    #                 color="blue"
-    #             ),
-    #             showarrow=False,
-    #             opacity=0.4,
-    #             xshift= 0,
-    #             xref = 'x',
-    #             yref = 'paper',
-    #     ))
 
     yy2 = [0]
     for i in range(8):
@@ -512,32 +401,7 @@ def age_structure_plot(sols, params, cats_to_plot):  # ,confidence_range=None
                    automargin=True,
                    type='linear'
                    ),
-        updatemenus=[dict(
-            buttons=list([
-                dict(
-                    args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'linear', 'range': yax['range'], 'automargin': True},
-                           "yaxis2": {'title': 'Population', 'type': 'linear', 'overlaying': 'y1', 'range': yax['range'], 'ticktext': [population_format(0.01*vec[i]) for i in range(len(pop_vec_lin))], 'tickvals': [i for i in pop_vec_lin], 'automargin': True, 'side':'right'}
-                           }],  # tickformat
-                    label="Linear",
-                    method="relayout"
-                ),
-                # dict(
-                #     args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'log', 'range': log_range, 'automargin': True},
-                #            "yaxis2": {'title': 'Population', 'type': 'log', 'overlaying': 'y1', 'range': log_range, 'ticktext': [population_format(0.01*vec2[i]) for i in range(len(pop_log_vec))], 'tickvals': [i for i in pop_log_vec], 'automargin': True, 'side':'right'}
-                #            }],  # 'tickformat': yax_form_log,
-                #     label="Logarithmic",
-                #     method="relayout"
-                # )
-            ]),
-            x=0.5,
-            xanchor="right",
-            pad={"r": 5, "t": 30, "b": 10, "l": 5},
-            active=0,
-            y=-0.13,
-            showactive=True,
-            direction='up',
-            yanchor="top"
-        )],
+
         legend=dict(
             font=dict(size=font_size*(20/24)),
             x=0.5,
@@ -672,32 +536,6 @@ def stacked_bar_plot(sols, params, cats_to_plot):
                    ),
         barmode='stack',
 
-        updatemenus=[dict(
-            buttons=list([
-                dict(
-                    args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'linear', 'range': yax['range'], 'automargin': True},
-                           "yaxis2": {'title': 'Population', 'type': 'linear', 'overlaying': 'y1', 'range': yax['range'], 'ticktext': [population_format(0.01*vec[i]) for i in range(len(pop_vec_lin))], 'tickvals': [i for i in pop_vec_lin], 'automargin': True, 'side':'right'}
-                           }],  # tickformat
-                    label="Linear",
-                    method="relayout"
-                ),
-                # dict(
-                #     args=[{"yaxis": {'title': 'Percentage of Total Population', 'type': 'log', 'range': log_range, 'automargin': True},
-                #            "yaxis2": {'title': 'Population', 'type': 'log', 'overlaying': 'y1', 'range': log_range, 'ticktext': [population_format(0.01*vec2[i]) for i in range(len(pop_log_vec))], 'tickvals': [i for i in pop_log_vec], 'automargin': True, 'side':'right'}
-                #            }],  # 'tickformat': yax_form_log,
-                #     label="Logarithmic",
-                #     method="relayout"
-                # )
-            ]),
-            x=0.5,
-            xanchor="right",
-            pad={"r": 5, "t": 30, "b": 10, "l": 5},
-            active=0,
-            y=-0.13,
-            showactive=True,
-            direction='up',
-            yanchor="top"
-        )],
         legend=dict(
             font=dict(size=font_size*(20/24)),
             x=0.5,
