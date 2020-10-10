@@ -32,6 +32,7 @@ def figure_generator(sols, params, cats_to_plot):
 
     xx = sols[0]['t']
 
+
     for sol in sols:
         for name in categories.keys():
             if name in cats_to_plot:
@@ -50,6 +51,7 @@ def figure_generator(sols, params, cats_to_plot):
     ymax = 0
     for line in lines_to_plot:
         ymax = max(ymax, max(line['y']))
+
 
     yax = dict(range=[0, min(1.1*ymax, 100)])
     ##
@@ -70,6 +72,7 @@ def figure_generator(sols, params, cats_to_plot):
         yy2.append(10**(i-5))
         yy2.append(2*10**(i-5))
         yy2.append(5*10**(i-5))
+
 
     yy = [i for i in yy2]
 
@@ -93,24 +96,21 @@ def figure_generator(sols, params, cats_to_plot):
     shapes = []
     annots = []
 
-
     layout = go.Layout(
         template="plotly",
         shapes=shapes,
         annotations=annots,
         font=dict(size=font_size),  # '12em'),
-        margin=dict(t=5, b=5, l=10, r=10, pad=15),
+        margin=dict(t=0, b=0, l=0, r=0,pad= 5),
         hovermode='x',
         xaxis=dict(
             title='Days',
-
             automargin=True,
             hoverformat='.0f',
         ),
         yaxis=dict(mirror=True,
                    title='Percentage of Total Population',
                    range=yax['range'],
-
                    automargin=True,
                    type='linear'
                    ),
