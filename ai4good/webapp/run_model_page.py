@@ -8,6 +8,7 @@ from ai4good.webapp.model_runner import ModelScheduleRunResult
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 import dash_table
+import csv
 
 
 def camp_selector():
@@ -62,7 +63,8 @@ def profile_selector():
             dash_table.DataTable(
                 id='profile_table',
                 columns=[],
-                data=[]
+                data=[],
+                tooltip={}
             ),
             dbc.Button("Save", id="save_profile_button",outline=True, color="info", className="mr-1",
                        style={'display': 'none'})
@@ -186,6 +188,12 @@ layout = html.Div(
     ], style={'margin': 10}
 )
 
+def findToolTip(query):
+    with open('fs\params\Parameters_mouse-over_des.csv', encoding='utf-8') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        for row in csv_reader:
+            if query == row["Parameter"]:
+                return row["Description"]
 
 @dash_app.callback(
     Output('camp-info', 'children'),
@@ -209,17 +217,14 @@ def update_model_info(value):
 
 
 @dash_app.callback(
-    [Output('profile_help', 'children'),
-     Output('profile_table', 'columns'), Output('profile_table', 'data'),
-     Output('save_profile_button', 'style')],
+    [Output('profile_help', 'children'),Output('profile_table','columns'), Output('profile_table', 'data'),Output('save_profile_button', 'style'),Output('profile_table', 'tooltip_data')],
     [Input('model-dropdown', 'value'), Input('profile-dropdown', 'value')])
 def update_profile_info(model, profile):
     if model is not None and profile is not None:
         df = facade.ps.get_params(model, profile).drop(columns=['Profile'])
-        return '', [{"name": i, "id": i, 'editable': i != 'Parameter'} for i in df.columns], \
-               df.to_dict('records'), {'float': 'right', 'margin-top': 12}
+        return "", [{"name": i, "id": i, 'editable': i != 'Parameter'} for i in df.columns], df.to_dict('records'), {'float': 'right', 'margin-top': 12}, [{c:{'type': 'text','value': findToolTip(r)} for c in df.columns} for r in df[df.columns[0]].values]
     else:
-        return ['Select profile', [], [], {'display': 'none'}]
+        return ['Select profile', [], [], {'display': 'none'},[]]
 
 
 @dash_app.callback(
